@@ -4,6 +4,7 @@ import { Pressable, Text, View } from "react-native";
 export default function Index() {
   return (
     <View className="flex gap-10 w-full h-full justify-center items-center">
+      <Text className="font-semibold text-2xl">Blood on the Clocktower</Text>
       <Link href="./host" asChild>
         <Pressable>
           <Text>Host</Text>
