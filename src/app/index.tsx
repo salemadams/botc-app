@@ -3,13 +3,7 @@ import { Pressable, Text, View } from "react-native";
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <View className="flex gap-10 w-full h-full justify-center items-center">
       <Link href="./host" asChild>
         <Pressable>
           <Text>Host</Text>
