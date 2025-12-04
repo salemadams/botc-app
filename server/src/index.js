@@ -1,34 +1,47 @@
-const express = require('express');
-const http = require('http');
-const cors = require('cors');
-const { Server } = require('socket.io');
+import "dotenv/config";
+import express, { json } from "express";
+import { createServer } from "http";
+import cors from "cors";
+import { Server } from "socket.io";
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
+    origin: process.env.NODE_ENV === "production"
+      ? process.env.CLIENT_URL
+      : "*",
+    methods: ["GET", "POST"],
+  },
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
-app.use(express.json());
+app.use(json());
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Blood on the Clocktower server is running' });
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Blood on the Clocktower server is running",
+  });
 });
 
-io.on('connection', (socket) => {
-  console.log('Client connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log(`Connection established to socket: ${socket}`);
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+  socket.on("joinRoom", (roomName) => {
+    socket.join(roomName);
+    console.log(`Socket ${socket.id} joined room: ${roomName}`);
+  });
+  socket.on("leaveRoom", (roomName) => {
+    socket.leave(roomName);
+    console.log(`Socket ${socket.id} left room: ${roomName}`);
   });
 });
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'not set'}`);
+  console.log(`CORS origin: ${process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "*"}`);
 });
