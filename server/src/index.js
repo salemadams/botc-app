@@ -8,9 +8,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === "production"
-      ? process.env.CLIENT_URL
-      : "*",
+    origin:
+      process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "*",
     methods: ["GET", "POST"],
   },
 });
@@ -42,6 +41,4 @@ io.on("connection", (socket) => {
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'not set'}`);
-  console.log(`CORS origin: ${process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "*"}`);
 });
