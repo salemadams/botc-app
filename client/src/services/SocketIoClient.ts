@@ -33,4 +33,8 @@ export default class SocketIoClient extends EventEmitter {
       console.log(`connect_error due to ${err.message}`);
     });
   }
+
+  subscribe(event: string, callback: () => void) {
+    this.socket!.on(event, callback);
+  }
 }
