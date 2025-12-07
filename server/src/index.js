@@ -27,11 +27,28 @@ app.get("/health", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`Connection established to socket: ${socket}`);
+  console.log(`Connection established to socket: ${socket.id}`);
 
-  socket.on("joinRoom", (roomName) => {
-    socket.join(roomName);
-    console.log(`Socket ${socket.id} joined room: ${roomName}`);
+  socket.on("joinRoom", ({ code, host }) => {
+    const roomCode = String(code);
+
+    if (!host) {
+      const allRooms = io.of("/").adapter.rooms;
+      const roomExists = allRooms.has(roomCode);
+
+      if (!roomExists) {
+        console.log(`Room ${roomCode} not found`);
+
+        // Add client side notification to show "Room not found"
+        socket.emit("joinRoomError", { message: "Room not found" });
+        return;
+      }
+    }
+
+    socket.join(roomCode);
+    console.log(
+      `Socket ${socket.id} joined room ${roomCode} as ${host ? "host" : "player"}`,
+    );
   });
   socket.on("leaveRoom", (roomName) => {
     socket.leave(roomName);

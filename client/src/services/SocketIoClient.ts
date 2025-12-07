@@ -21,10 +21,6 @@ export default class SocketIoClient extends EventEmitter {
 
     this.socket = io(API.apiUrl, options);
 
-    this.socket.on("connection", () => {
-      this.emit("connection");
-    });
-
     this.socket.on("disconnect", () => {
       this.emit("disconnect");
     });
@@ -36,5 +32,9 @@ export default class SocketIoClient extends EventEmitter {
 
   subscribe(event: string, callback: () => void) {
     this.socket!.on(event, callback);
+  }
+
+  send(event: string, data?: unknown) {
+    this.socket!.emit(event, data);
   }
 }

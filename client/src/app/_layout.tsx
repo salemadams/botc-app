@@ -1,6 +1,11 @@
 import { Stack } from "expo-router";
+import { SocketProvider } from "@/hooks/useSocketContext";
 import "../../global.css";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <SocketProvider>
+      <Stack />
+    </SocketProvider>
+  );
 }
