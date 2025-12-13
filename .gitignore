@@ -33,6 +33,7 @@ logs/
 # Build outputs
 dist/
 build/
+shared/**/*.js
 
 # Temporary files
 tmp/

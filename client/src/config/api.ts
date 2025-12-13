@@ -1,6 +1,17 @@
+import Constants from 'expo-constants';
+
+const getDevApiUrl = () => {
+  const debuggerHost = Constants.expoConfig?.hostUri;
+  if (debuggerHost) {
+    const host = debuggerHost.split(':')[0];
+    return `http://${host}:4000`;
+  }
+  return 'http://localhost:4000';
+};
+
 const ENV = {
   dev: {
-    apiUrl: 'http://10.20.56.38:4000',
+    apiUrl: getDevApiUrl(),
   },
   prod: {
     apiUrl: process.env.EXPO_PUBLIC_API_URL || 'https://your-production-url.com',

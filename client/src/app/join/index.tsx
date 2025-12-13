@@ -1,26 +1,39 @@
 import { useSocketContext } from "@/hooks/useSocketContext";
 import { useEffect, useState } from "react";
 import { Button, TextInput, View } from "react-native";
+import { JoinRoomRequest, LeaveRoomRequest, RoomJoinedEvent } from "../../../../shared/types/game";
+import { SocketEvent } from "../../../../shared/types/events";
+import { useGameContext } from "@/hooks/useGameContext";
+import { router } from "expo-router";
 
-export default function Index() {
+export default function JoinPage() {
   const [gameCode, setGameCode] = useState("");
-  const { client } = useSocketContext();
+  const { setGameRoom } = useGameContext();
+  const { client, userName } = useSocketContext();
   useEffect(() => {
+    client.subscribe(SocketEvent.RoomJoined, (event: RoomJoinedEvent) => {
+      router.navigate("./game");
+      setGameRoom(event.room);
+    });
     return () => {
-      client.send("leaveRoom", gameCode);
+      if (gameCode.length > 0) {
+        const leaveRequest: LeaveRoomRequest = { code: gameCode };
+        client.send(SocketEvent.LeaveRoom, leaveRequest);
+      }
     };
   }, []);
   const handleCodeSubmit = () => {
-    // Add state for tracking submitted game code (used for proper disconnect on unmount)
-    client.send("joinRoom", { code: gameCode, host: false });
+    const joinRequest: JoinRoomRequest = { code: gameCode, name: userName };
+    client.send(SocketEvent.JoinRoom, joinRequest);
   };
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View className="flex justify-center items-center w-full h-full">
       <TextInput
         className="w-2/4 h-10 border border-gray-300 rounded-lg px-4 text-base"
         placeholder="Game Code"
+        keyboardType="numeric"
         value={gameCode}
-        onChangeText={(code) => setGameCode(code)}
+        onChangeText={setGameCode}
       />
       <Button title="Submit" onPress={handleCodeSubmit}></Button>
     </View>
