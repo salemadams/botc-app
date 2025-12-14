@@ -1,21 +1,25 @@
-import { Link } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import { useSocketContext } from "@/hooks/useSocketContext";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Button, Text, TextInput, View } from "react-native";
 
 export default function Index() {
+  const { setUsername } = useSocketContext();
+  const [nameInput, setNameInput] = useState("");
+  const handleNameSubmit = () => {
+    if (nameInput.length === 0) return;
+    setUsername(nameInput);
+    router.navigate("./home");
+  };
   return (
-    <View className="flex gap-10 w-full h-full justify-center items-center">
-      <Text className="font-semibold text-2xl">Blood on the Clocktower</Text>
-      <Link href="./host" asChild>
-        <Pressable>
-          <Text>Host</Text>
-        </Pressable>
-      </Link>
-
-      <Link href="./join" asChild>
-        <Pressable>
-          <Text>Join</Text>
-        </Pressable>
-      </Link>
+    <View className="flex justify-center items-center w-full h-full">
+      <Text>Enter Your Name:</Text>
+      <TextInput
+        className="w-2/4 h-10 border border-gray-300 rounded-lg px-4 text-base"
+        value={nameInput}
+        onChangeText={(name) => setNameInput(name)}
+      ></TextInput>
+      <Button title="Submit" onPress={handleNameSubmit}></Button>
     </View>
   );
 }

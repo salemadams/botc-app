@@ -1,25 +1,19 @@
 import SocketIoClient from "@/services/SocketIoClient";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-interface Player {
-  id: string;
-  name: string;
-}
-
 interface SocketContextType {
-  players: Player[];
-  setPlayers: (data: Player[]) => void;
   client: SocketIoClient;
+  userName: string;
+  setUsername: (name: string) => void;
 }
 
 const SocketContext = createContext<SocketContextType | null>(null);
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
-  const [players, setPlayers] = useState<Player[]>([]);
   const [client] = useState(() => new SocketIoClient());
-
+  const [userName, setUsername] = useState("");
   return (
-    <SocketContext.Provider value={{ players, setPlayers, client }}>
+    <SocketContext.Provider value={{ client, userName, setUsername }}>
       {children}
     </SocketContext.Provider>
   );
