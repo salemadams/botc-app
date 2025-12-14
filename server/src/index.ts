@@ -42,6 +42,10 @@ io.on("connection", (socket) => {
   socket.on(SocketEvent.LeaveRoom, ({ code }) => {
     gameService.leaveRoom(socket, code);
   });
+
+  socket.on(SocketEvent.StartGame, ({ code }) => {
+    gameService.startGame(socket.id, code);
+  });
 });
 
 server.listen(PORT, () => {

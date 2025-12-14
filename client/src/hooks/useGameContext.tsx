@@ -2,7 +2,9 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { router } from "expo-router";
 import {
   GameRoom,
+  GameStartedEvent,
   JoinRoomErrorEvent,
+  Player,
   PlayerJoinedEvent,
   PlayerLeftEvent,
 } from "../../../shared/types/game";
@@ -12,12 +14,15 @@ import { SocketEvent } from "../../../shared/types/events";
 interface GameContextType {
   gameRoom?: GameRoom;
   setGameRoom: (room?: GameRoom) => void;
+  currentPlayer?: Player;
+  setCurrentPlayer: (player?: Player) => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameRoom, setGameRoom] = useState<GameRoom | undefined>(undefined);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>(undefined);
   const { client } = useSocketContext();
   useEffect(() => {
     const unsubscribers = [
@@ -37,17 +42,26 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         });
       }),
       client.subscribe(SocketEvent.RoomLeft, () => {
-        router.navigate("./home");
         setGameRoom(undefined);
+        router.back();
       }),
       client.subscribe(SocketEvent.JoinRoomError, (event: JoinRoomErrorEvent) =>
         console.log(event.message),
       ),
+      client.subscribe(SocketEvent.GameStarted, (event: GameStartedEvent) => {
+        console.log("Game Started!");
+        setGameRoom(event.room);
+        router.replace("/game/session");
+      }),
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
-  return <GameContext.Provider value={{ gameRoom, setGameRoom }}>{children}</GameContext.Provider>;
+  return (
+    <GameContext.Provider value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer }}>
+      {children}
+    </GameContext.Provider>
+  );
 };
 
 export const useGameContext = () => {
