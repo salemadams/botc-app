@@ -8,11 +8,12 @@ import { router } from "expo-router";
 
 export default function JoinPage() {
   const [gameCode, setGameCode] = useState("");
-  const { setGameRoom } = useGameContext();
+  const { setGameRoom, setCurrentPlayer } = useGameContext();
   const { client, userName } = useSocketContext();
   useEffect(() => {
     client.subscribe(SocketEvent.RoomJoined, (event: RoomJoinedEvent) => {
-      router.navigate("./game");
+      setCurrentPlayer(event.currentPlayer);
+      router.navigate("./game/lobby");
       setGameRoom(event.room);
     });
     return () => {
@@ -26,6 +27,7 @@ export default function JoinPage() {
     const joinRequest: JoinRoomRequest = { code: gameCode, name: userName };
     client.send(SocketEvent.JoinRoom, joinRequest);
   };
+
   return (
     <View className="flex justify-center items-center w-full h-full">
       <TextInput

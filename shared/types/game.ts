@@ -29,11 +29,16 @@ export interface LeaveRoomRequest {
   code: string;
 }
 
+export interface StartGameRequest {
+  code: string;
+}
+
 export interface RoomCreatedEvent {
   room: GameRoom;
 }
 
 export interface RoomJoinedEvent {
+  currentPlayer: Player;
   room: GameRoom;
 }
 
@@ -43,6 +48,10 @@ export interface PlayerJoinedEvent {
 
 export interface PlayerLeftEvent {
   socketId: string;
+}
+
+export interface GameStartedEvent {
+  room: GameRoom;
 }
 
 export interface JoinRoomErrorEvent {

@@ -10,16 +10,18 @@ import { router } from "expo-router";
 export default function HomePage() {
   const [modalVisible, setModalVisible] = useState(false);
   const { client, userName } = useSocketContext();
-  const { setGameRoom } = useGameContext();
+  const { setGameRoom, setCurrentPlayer } = useGameContext();
   useEffect(() => {
     client.subscribe(SocketEvent.RoomCreated, (event: RoomCreatedEvent) => {
       setModalVisible(false);
-      router.navigate("./game");
+      router.navigate("./game/lobby");
       setGameRoom({
         code: event.room.code,
         players: event.room.players,
         phase: event.room.phase,
       });
+      // always set to first player (host player)
+      setCurrentPlayer(event.room.players[0]);
     });
   }, []);
   const handleHostPress = () => {

@@ -7,6 +7,7 @@ import {
   type PlayerJoinedEvent,
   type JoinRoomErrorEvent,
   PlayerLeftEvent,
+  GameStartedEvent,
 } from "../../../shared/types/game";
 import { SocketEvent } from "../../../shared/types/events";
 import type { Server, Socket } from "socket.io";
@@ -76,7 +77,7 @@ export class GameService {
     if (room) {
       room.players.push(player);
 
-      const roomJoinedEvent: RoomJoinedEvent = { room };
+      const roomJoinedEvent: RoomJoinedEvent = { room, currentPlayer: player };
       socket.emit(SocketEvent.RoomJoined, roomJoinedEvent);
 
       const playerJoinedEvent: PlayerJoinedEvent = { player };
@@ -103,5 +104,22 @@ export class GameService {
     const playerLeftEvent: PlayerLeftEvent = { socketId: socket.id };
     socket.broadcast.to(code).emit(SocketEvent.PlayerLeft, playerLeftEvent);
     console.log(`Socket ${socket.id} left room ${code}`);
+  }
+
+  startGame(socketId: string, code: string) {
+    const room = this.gameRooms.get(code);
+    if (!room) return;
+
+    const host = room.players.find((p) => p.host);
+    if (!host || host.socketId !== socketId) {
+      console.log(`Unauthorized start game attempt by ${socketId}`);
+      return;
+    }
+
+    room.phase = ServerPhase.playing;
+
+    const gameStartedEvent: GameStartedEvent = { room };
+    this.io.in(code).emit(SocketEvent.GameStarted, gameStartedEvent);
+    console.log(`Game started for room ${code}`);
   }
 }

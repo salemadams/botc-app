@@ -7,7 +7,9 @@ export default function RootLayout() {
   return (
     <SocketProvider>
       <GameProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+          <Stack.Screen name="join/index" options={{ gestureEnabled: true }} />
+        </Stack>
       </GameProvider>
     </SocketProvider>
   );
