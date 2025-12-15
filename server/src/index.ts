@@ -5,6 +5,7 @@ import cors from "cors";
 import { Server } from "socket.io";
 import { GameService } from "./services/GameService";
 import { SocketEvent } from "../../shared/types/events";
+import scriptRoutes from "./resources/script/script.routes";
 
 const app = express();
 const server = createServer(app);
@@ -21,6 +22,10 @@ const gameService = new GameService(io);
 app.use(cors());
 app.use(json());
 
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "BOTC API is running" });
+});
+
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -28,11 +33,13 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.use("/api/script", scriptRoutes);
+
 io.on("connection", (socket) => {
   console.log(`Connection established to socket: ${socket.id}`);
 
-  socket.on(SocketEvent.CreateRoom, ({ name }) => {
-    gameService.createRoom(socket, name);
+  socket.on(SocketEvent.CreateRoom, ({ name, scriptId }) => {
+    gameService.createRoom(socket, name, scriptId);
   });
 
   socket.on(SocketEvent.JoinRoom, ({ code, name }) => {
@@ -43,8 +50,8 @@ io.on("connection", (socket) => {
     gameService.leaveRoom(socket, code);
   });
 
-  socket.on(SocketEvent.StartGame, ({ code }) => {
-    gameService.startGame(socket.id, code);
+  socket.on(SocketEvent.StartGame, ({ code, roleRequirements, enabledRoleIds }) => {
+    gameService.startGame(socket.id, code, roleRequirements, enabledRoleIds);
   });
 });
 

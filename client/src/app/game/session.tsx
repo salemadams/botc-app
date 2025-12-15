@@ -5,7 +5,7 @@ import { LeaveRoomRequest } from "../../../../shared/types/game";
 import { SocketEvent } from "../../../../shared/types/events";
 
 export default function SessionPage() {
-  const { gameRoom } = useGameContext();
+  const { gameRoom, currentPlayer } = useGameContext();
   const { client } = useSocketContext();
 
   const leaveGame = () => {
@@ -17,7 +17,7 @@ export default function SessionPage() {
 
   return (
     <View className="flex justify-center items-center w-full h-full">
-      <Text>Session Page!</Text>
+      <Text>{currentPlayer!.role?.name ?? ""}</Text>
       <Button title="Leave Game" onPress={leaveGame}></Button>
     </View>
   );

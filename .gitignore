@@ -35,6 +35,10 @@ dist/
 build/
 shared/**/*.js
 
+# Uploaded user data
+server/data/scripts/uploaded/*
+!server/data/scripts/uploaded/.gitkeep
+
 # Temporary files
 tmp/
 temp/
