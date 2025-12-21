@@ -11,13 +11,19 @@ import {
 } from "../../../shared/types/game";
 import { SocketEvent } from "../../../shared/types/events";
 import type { Server, Socket } from "socket.io";
+import { ScriptService } from "./ScriptService";
+import { RoleService } from "./RoleService";
 
 export class GameService {
   private gameRooms = new Map<string, GameRoom>();
   private io: Server;
+  private scriptService: ScriptService;
+  private roleService: RoleService;
 
   constructor(io: Server) {
     this.io = io;
+    this.scriptService = new ScriptService();
+    this.roleService = new RoleService();
   }
 
   private generateUniqueGameCode(rooms: Map<string, Set<string>>): string {
@@ -28,7 +34,7 @@ export class GameService {
     return newGameCode;
   }
 
-  createRoom(socket: Socket, name: string): void {
+  async createRoom(socket: Socket, name: string, scriptId: string): Promise<void> {
     const allRooms = this.io.of("/").adapter.rooms;
     const gameCode = this.generateUniqueGameCode(allRooms);
     const player: Player = {
@@ -38,16 +44,31 @@ export class GameService {
     };
 
     socket.join(gameCode);
+
+    const script = await this.scriptService.getScriptById(scriptId);
+    if (!script) {
+      console.log(`Script with id ${scriptId} not found, room can not be created`);
+      return;
+    }
+
+    const roleIds = script.slice(1) as string[];
+    const roles = this.roleService.getRolesByIds(roleIds);
+
     const newRoom: GameRoom = {
       code: gameCode,
       players: [player],
       phase: ServerPhase.lobby,
+      scriptDetail: {
+        meta: script[0],
+        roles: roles,
+      },
     };
     this.gameRooms.set(gameCode, newRoom);
 
     const event: RoomCreatedEvent = { room: newRoom };
     socket.emit(SocketEvent.RoomCreated, event);
-    console.log(`${name} created room ${gameCode}`);
+    console.log(newRoom.scriptDetail.roles);
+    console.log(`${name} created room ${gameCode} with script ${scriptId}`);
   }
 
   joinRoom(socket: Socket, code: string, name: string): void {

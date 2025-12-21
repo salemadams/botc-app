@@ -10,4 +10,5 @@ export enum SocketEvent {
   PlayerLeft = "playerLeft",
   GameStarted = "gameStarted",
   JoinRoomError = "joinRoomError",
+  RoleAssigned = "roleAssigned",
 }

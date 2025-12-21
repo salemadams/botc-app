@@ -7,6 +7,7 @@ import {
   Player,
   PlayerJoinedEvent,
   PlayerLeftEvent,
+  RoleAssignedEvent,
 } from "../../../shared/types/game";
 import { useSocketContext } from "./useSocketContext";
 import { SocketEvent } from "../../../shared/types/events";
@@ -49,9 +50,18 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         console.log(event.message),
       ),
       client.subscribe(SocketEvent.GameStarted, (event: GameStartedEvent) => {
-        console.log("Game Started!");
         setGameRoom(event.room);
+        event.room.players.map((p) => !p.host && console.log(`${p.name} is ${p.role!.name}`));
         router.replace("/game/session");
+      }),
+      client.subscribe(SocketEvent.RoleAssigned, (event: RoleAssignedEvent) => {
+        setCurrentPlayer((prev) => {
+          if (!prev) return;
+          return {
+            ...prev,
+            role: event.role,
+          };
+        });
       }),
     ];
 
