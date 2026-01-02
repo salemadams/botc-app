@@ -8,6 +8,8 @@ import {
   type JoinRoomErrorEvent,
   PlayerLeftEvent,
   GameStartedEvent,
+  Role,
+  RoleAssignedEvent,
 } from "../../../shared/types/game";
 import { SocketEvent } from "../../../shared/types/events";
 import type { Server, Socket } from "socket.io";
@@ -69,6 +71,33 @@ export class GameService {
     socket.emit(SocketEvent.RoomCreated, event);
     console.log(newRoom.scriptDetail.roles);
     console.log(`${name} created room ${gameCode} with script ${scriptId}`);
+
+    // Auto-add test players in development mode
+    if (process.env.NODE_ENV === "development") {
+      this.addTestPlayers(gameCode, 5);
+    }
+  }
+
+  private addTestPlayers(gameCode: string, count: number): void {
+    const room = this.gameRooms.get(gameCode);
+    if (!room) return;
+
+    const testPlayerNames = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"];
+
+    for (let i = 0; i < count; i++) {
+      const fakePlayer: Player = {
+        socketId: `bot-${gameCode}-${i}`,
+        name: testPlayerNames[i] || `Bot ${i + 1}`,
+        host: false,
+      };
+
+      room.players.push(fakePlayer);
+
+      const playerJoinedEvent: PlayerJoinedEvent = { player: fakePlayer };
+      this.io.to(gameCode).emit(SocketEvent.PlayerJoined, playerJoinedEvent);
+    }
+
+    console.log(`Added ${count} test players to room ${gameCode}`);
   }
 
   joinRoom(socket: Socket, code: string, name: string): void {
@@ -127,7 +156,12 @@ export class GameService {
     console.log(`Socket ${socket.id} left room ${code}`);
   }
 
-  startGame(socketId: string, code: string) {
+  startGame(
+    socketId: string,
+    code: string,
+    roleRequirements: { [key: string]: number },
+    enabledRoleIds: string[],
+  ) {
     const room = this.gameRooms.get(code);
     if (!room) return;
 
@@ -137,10 +171,30 @@ export class GameService {
       return;
     }
 
+    const enabledRoles = this.roleService.getRolesByIds(enabledRoleIds);
+    const nonHostPlayers = room.players.filter((p) => !p.host);
+
+    const rolePool: Role[] = [];
+    Object.entries(roleRequirements).forEach(([team, count]) => {
+      const teamRoles = enabledRoles.filter((r) => r.team === team);
+      const selected = teamRoles.sort(() => Math.random() - 0.5).slice(0, count);
+      rolePool.push(...selected);
+    });
+
+    const shuffledRoles = rolePool.sort(() => Math.random() - 0.5);
+    nonHostPlayers.forEach((player, index) => {
+      player.role = shuffledRoles[index];
+    });
+
     room.phase = ServerPhase.playing;
 
     const gameStartedEvent: GameStartedEvent = { room };
     this.io.in(code).emit(SocketEvent.GameStarted, gameStartedEvent);
+    room.players.map((p) => {
+      if (p.host) return;
+      const roleAssignedEvent: RoleAssignedEvent = { role: p.role! };
+      this.io.to(p.socketId).emit(SocketEvent.RoleAssigned, roleAssignedEvent);
+    });
     console.log(`Game started for room ${code}`);
   }
 }
