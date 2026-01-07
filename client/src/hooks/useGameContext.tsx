@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import {
   GameRoom,
@@ -23,7 +30,9 @@ const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameRoom, setGameRoom] = useState<GameRoom | undefined>(undefined);
-  const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>(undefined);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>(
+    undefined,
+  );
   const { client } = useSocketContext();
   useEffect(() => {
     const unsubscribers = [
@@ -38,7 +47,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           if (!prevRoom) return prevRoom;
           return {
             ...prevRoom,
-            players: prevRoom.players.filter((p) => p.socketId !== event.socketId),
+            players: prevRoom.players.filter(
+              (p) => p.socketId !== event.socketId,
+            ),
           };
         });
       }),
@@ -51,7 +62,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       ),
       client.subscribe(SocketEvent.GameStarted, (event: GameStartedEvent) => {
         setGameRoom(event.room);
-        event.room.players.map((p) => !p.host && console.log(`${p.name} is ${p.role!.name}`));
+        event.room.players.map(
+          (p) => !p.host && console.log(`${p.name} is ${p.role!.name}`),
+        );
         router.replace("/game/session");
       }),
       client.subscribe(SocketEvent.RoleAssigned, (event: RoleAssignedEvent) => {
@@ -63,12 +76,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           };
         });
       }),
+      client.subscribe(SocketEvent.PlayerNotified, () =>
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
+      ),
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
   return (
-    <GameContext.Provider value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer }}>
+    <GameContext.Provider
+      value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer }}
+    >
       {children}
     </GameContext.Provider>
   );

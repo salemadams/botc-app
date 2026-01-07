@@ -11,7 +11,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "*",
+    origin:
+      process.env.NODE_ENV === "production" ? process.env.CLIENT_URL : "*",
     methods: ["GET", "POST"],
   },
 });
@@ -50,9 +51,16 @@ io.on("connection", (socket) => {
     gameService.leaveRoom(socket, code);
   });
 
-  socket.on(SocketEvent.StartGame, ({ code, roleRequirements, enabledRoleIds }) => {
-    gameService.startGame(socket.id, code, roleRequirements, enabledRoleIds);
-  });
+  socket.on(
+    SocketEvent.StartGame,
+    ({ code, roleRequirements, enabledRoleIds }) => {
+      gameService.startGame(socket.id, code, roleRequirements, enabledRoleIds);
+    },
+  );
+
+  socket.on(SocketEvent.NotifyPlayer, ({ socketId }) =>
+    io.to(socketId).emit(SocketEvent.PlayerNotified),
+  );
 });
 
 server.listen(PORT, () => {

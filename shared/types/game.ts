@@ -123,6 +123,10 @@ export interface StartGameRequest {
   enabledRoleIds: string[];
 }
 
+export interface NotifyPlayerRequest {
+  socketId: string;
+}
+
 export interface RoomCreatedEvent {
   room: GameRoom;
 }

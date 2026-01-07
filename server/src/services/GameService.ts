@@ -36,7 +36,11 @@ export class GameService {
     return newGameCode;
   }
 
-  async createRoom(socket: Socket, name: string, scriptId: string): Promise<void> {
+  async createRoom(
+    socket: Socket,
+    name: string,
+    scriptId: string,
+  ): Promise<void> {
     const allRooms = this.io.of("/").adapter.rooms;
     const gameCode = this.generateUniqueGameCode(allRooms);
     const player: Player = {
@@ -49,7 +53,9 @@ export class GameService {
 
     const script = await this.scriptService.getScriptById(scriptId);
     if (!script) {
-      console.log(`Script with id ${scriptId} not found, room can not be created`);
+      console.log(
+        `Script with id ${scriptId} not found, room can not be created`,
+      );
       return;
     }
 
@@ -69,7 +75,6 @@ export class GameService {
 
     const event: RoomCreatedEvent = { room: newRoom };
     socket.emit(SocketEvent.RoomCreated, event);
-    console.log(newRoom.scriptDetail.roles);
     console.log(`${name} created room ${gameCode} with script ${scriptId}`);
 
     // Auto-add test players in development mode
@@ -82,7 +87,16 @@ export class GameService {
     const room = this.gameRooms.get(gameCode);
     if (!room) return;
 
-    const testPlayerNames = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry"];
+    const testPlayerNames = [
+      "Alice",
+      "Bob",
+      "Charlie",
+      "Diana",
+      "Eve",
+      "Frank",
+      "Grace",
+      "Henry",
+    ];
 
     for (let i = 0; i < count; i++) {
       const fakePlayer: Player = {
@@ -131,7 +145,9 @@ export class GameService {
       socket.emit(SocketEvent.RoomJoined, roomJoinedEvent);
 
       const playerJoinedEvent: PlayerJoinedEvent = { player };
-      socket.broadcast.to(code).emit(SocketEvent.PlayerJoined, playerJoinedEvent);
+      socket.broadcast
+        .to(code)
+        .emit(SocketEvent.PlayerJoined, playerJoinedEvent);
 
       console.log(`${name} joined room ${code}`);
     }
@@ -177,7 +193,9 @@ export class GameService {
     const rolePool: Role[] = [];
     Object.entries(roleRequirements).forEach(([team, count]) => {
       const teamRoles = enabledRoles.filter((r) => r.team === team);
-      const selected = teamRoles.sort(() => Math.random() - 0.5).slice(0, count);
+      const selected = teamRoles
+        .sort(() => Math.random() - 0.5)
+        .slice(0, count);
       rolePool.push(...selected);
     });
 
