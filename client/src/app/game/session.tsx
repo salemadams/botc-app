@@ -83,10 +83,10 @@ export default function SessionPage() {
 
           <Modal
             animationType="slide"
+            transparent={true}
             visible={modalVisible}
-            presentationStyle="pageSheet"
           >
-            <View className="flex-1 bg-white">
+            <View className="h-1/3 mt-auto bg-white">
               <View className="p-4 border-b border-gray-200 flex-row justify-between items-center">
                 <Text className="text-xl font-bold">
                   {selectedPlayer?.name ?? "Player Details"}
@@ -116,7 +116,9 @@ export default function SessionPage() {
                               notifyPlayer(selectedPlayer.socketId)
                             }
                           >
-                            <Text className="text-white font-medium">Notify</Text>
+                            <Text className="text-white font-medium">
+                              Notify
+                            </Text>
                           </Pressable>
                         </View>
                       )}
