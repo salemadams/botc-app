@@ -15,9 +15,9 @@ import {
   PlayerJoinedEvent,
   PlayerLeftEvent,
   RoleAssignedEvent,
-} from "../../../shared/types/game";
+  EventEnum,
+} from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
-import { SocketEvent } from "../../../shared/types/events";
 
 interface GameContextType {
   gameRoom?: GameRoom;
@@ -36,13 +36,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const { client } = useSocketContext();
   useEffect(() => {
     const unsubscribers = [
-      client.subscribe(SocketEvent.PlayerJoined, (event: PlayerJoinedEvent) => {
+      client.subscribe(EventEnum.PlayerJoined, (event: PlayerJoinedEvent) => {
         setGameRoom((prevRoom?: GameRoom) => {
           if (!prevRoom) return prevRoom;
           return { ...prevRoom, players: [...prevRoom.players, event.player] };
         });
       }),
-      client.subscribe(SocketEvent.PlayerLeft, (event: PlayerLeftEvent) => {
+      client.subscribe(EventEnum.PlayerLeft, (event: PlayerLeftEvent) => {
         setGameRoom((prevRoom?: GameRoom) => {
           if (!prevRoom) return prevRoom;
           return {
@@ -53,21 +53,21 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           };
         });
       }),
-      client.subscribe(SocketEvent.RoomLeft, () => {
+      client.subscribe(EventEnum.RoomLeft, () => {
         setGameRoom(undefined);
         router.back();
       }),
-      client.subscribe(SocketEvent.JoinRoomError, (event: JoinRoomErrorEvent) =>
+      client.subscribe(EventEnum.JoinRoomError, (event: JoinRoomErrorEvent) =>
         console.log(event.message),
       ),
-      client.subscribe(SocketEvent.GameStarted, (event: GameStartedEvent) => {
+      client.subscribe(EventEnum.GameStarted, (event: GameStartedEvent) => {
         setGameRoom(event.room);
         event.room.players.map(
           (p) => !p.host && console.log(`${p.name} is ${p.role!.name}`),
         );
         router.replace("/game/session");
       }),
-      client.subscribe(SocketEvent.RoleAssigned, (event: RoleAssignedEvent) => {
+      client.subscribe(EventEnum.RoleAssigned, (event: RoleAssignedEvent) => {
         setCurrentPlayer((prev) => {
           if (!prev) return;
           return {
@@ -76,7 +76,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
           };
         });
       }),
-      client.subscribe(SocketEvent.PlayerNotified, () =>
+      client.subscribe(EventEnum.PlayerNotified, () =>
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
       ),
     ];

@@ -6,8 +6,8 @@ import {
   LeaveRoomRequest,
   NotifyPlayerRequest,
   Player,
-} from "../../../../shared/types/game";
-import { SocketEvent } from "../../../../shared/types/events";
+  RequestEnum,
+} from "@botc/shared";
 import { useState } from "react";
 
 export default function SessionPage() {
@@ -19,13 +19,13 @@ export default function SessionPage() {
   const leaveGame = () => {
     if (gameRoom && gameRoom.code) {
       const leaveRequest: LeaveRoomRequest = { code: gameRoom.code };
-      client.send(SocketEvent.LeaveRoom, leaveRequest);
+      client.send(RequestEnum.LeaveRoom, leaveRequest);
       router.navigate("/home");
     }
   };
   const notifyPlayer = (socketId: string) => {
     const notifyRequest: NotifyPlayerRequest = { socketId: socketId };
-    client.send(SocketEvent.NotifyPlayer, notifyRequest);
+    client.send(RequestEnum.NotifyPlayer, notifyRequest);
   };
 
   return (

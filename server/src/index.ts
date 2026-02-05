@@ -4,7 +4,7 @@ import { createServer } from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { GameService } from "./services/GameService";
-import { SocketEvent } from "../../shared/types/events";
+import { RequestEnum, EventEnum } from "@botc/shared";
 import scriptRoutes from "./resources/script/script.routes";
 
 const app = express();
@@ -39,27 +39,27 @@ app.use("/api/script", scriptRoutes);
 io.on("connection", (socket) => {
   console.log(`Connection established to socket: ${socket.id}`);
 
-  socket.on(SocketEvent.CreateRoom, ({ name, scriptId }) => {
+  socket.on(RequestEnum.CreateRoom, ({ name, scriptId }) => {
     gameService.createRoom(socket, name, scriptId);
   });
 
-  socket.on(SocketEvent.JoinRoom, ({ code, name }) => {
+  socket.on(RequestEnum.JoinRoom, ({ code, name }) => {
     gameService.joinRoom(socket, code, name);
   });
 
-  socket.on(SocketEvent.LeaveRoom, ({ code }) => {
+  socket.on(RequestEnum.LeaveRoom, ({ code }) => {
     gameService.leaveRoom(socket, code);
   });
 
   socket.on(
-    SocketEvent.StartGame,
+    RequestEnum.StartGame,
     ({ code, roleRequirements, enabledRoleIds }) => {
       gameService.startGame(socket.id, code, roleRequirements, enabledRoleIds);
     },
   );
 
-  socket.on(SocketEvent.NotifyPlayer, ({ socketId }) =>
-    io.to(socketId).emit(SocketEvent.PlayerNotified),
+  socket.on(RequestEnum.NotifyPlayer, ({ socketId }) =>
+    io.to(socketId).emit(EventEnum.PlayerNotified),
   );
 });
 

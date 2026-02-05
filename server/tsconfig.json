@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@botc/shared": ["../shared/types/index.ts"],
-      "@botc/shared/*": ["../shared/types/*"]
+      "@botc/shared": ["../shared/index.ts"],
+      "@botc/shared/*": ["../shared/*"]
     }
   },
   "include": ["src/**/*", "../shared/**/*"],

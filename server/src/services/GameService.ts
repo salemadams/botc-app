@@ -10,8 +10,8 @@ import {
   GameStartedEvent,
   Role,
   RoleAssignedEvent,
-} from "../../../shared/types/game";
-import { SocketEvent } from "../../../shared/types/events";
+  EventEnum,
+} from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
 import { RoleService } from "./RoleService";
@@ -74,7 +74,7 @@ export class GameService {
     this.gameRooms.set(gameCode, newRoom);
 
     const event: RoomCreatedEvent = { room: newRoom };
-    socket.emit(SocketEvent.RoomCreated, event);
+    socket.emit(EventEnum.RoomCreated, event);
     console.log(`${name} created room ${gameCode} with script ${scriptId}`);
 
     // Auto-add test players in development mode
@@ -108,7 +108,7 @@ export class GameService {
       room.players.push(fakePlayer);
 
       const playerJoinedEvent: PlayerJoinedEvent = { player: fakePlayer };
-      this.io.to(gameCode).emit(SocketEvent.PlayerJoined, playerJoinedEvent);
+      this.io.to(gameCode).emit(EventEnum.PlayerJoined, playerJoinedEvent);
     }
 
     console.log(`Added ${count} test players to room ${gameCode}`);
@@ -125,7 +125,7 @@ export class GameService {
     if (!allRooms.has(code)) {
       console.log(`Room ${code} not found`);
       const errorEvent: JoinRoomErrorEvent = { message: "Room not found" };
-      socket.emit(SocketEvent.JoinRoomError, errorEvent);
+      socket.emit(EventEnum.JoinRoomError, errorEvent);
       return;
     }
 
@@ -142,12 +142,10 @@ export class GameService {
       room.players.push(player);
 
       const roomJoinedEvent: RoomJoinedEvent = { room, currentPlayer: player };
-      socket.emit(SocketEvent.RoomJoined, roomJoinedEvent);
+      socket.emit(EventEnum.RoomJoined, roomJoinedEvent);
 
       const playerJoinedEvent: PlayerJoinedEvent = { player };
-      socket.broadcast
-        .to(code)
-        .emit(SocketEvent.PlayerJoined, playerJoinedEvent);
+      socket.broadcast.to(code).emit(EventEnum.PlayerJoined, playerJoinedEvent);
 
       console.log(`${name} joined room ${code}`);
     }
@@ -159,7 +157,7 @@ export class GameService {
     if (!room) return;
     const isHost = room.players.find((p) => p.socketId === socket.id)?.host;
     if (isHost) {
-      this.io.to(code).emit(SocketEvent.RoomLeft);
+      this.io.to(code).emit(EventEnum.RoomLeft);
       this.io.in(code).socketsLeave(code);
       this.gameRooms.delete(code);
       console.log(`Host has closed room ${code}`);
@@ -168,7 +166,7 @@ export class GameService {
     room.players = room.players.filter((p) => p.socketId !== socket.id);
     socket.leave(code);
     const playerLeftEvent: PlayerLeftEvent = { socketId: socket.id };
-    socket.broadcast.to(code).emit(SocketEvent.PlayerLeft, playerLeftEvent);
+    socket.broadcast.to(code).emit(EventEnum.PlayerLeft, playerLeftEvent);
     console.log(`Socket ${socket.id} left room ${code}`);
   }
 
@@ -207,11 +205,11 @@ export class GameService {
     room.phase = ServerPhase.playing;
 
     const gameStartedEvent: GameStartedEvent = { room };
-    this.io.in(code).emit(SocketEvent.GameStarted, gameStartedEvent);
+    this.io.in(code).emit(EventEnum.GameStarted, gameStartedEvent);
     room.players.map((p) => {
       if (p.host) return;
       const roleAssignedEvent: RoleAssignedEvent = { role: p.role! };
-      this.io.to(p.socketId).emit(SocketEvent.RoleAssigned, roleAssignedEvent);
+      this.io.to(p.socketId).emit(EventEnum.RoleAssigned, roleAssignedEvent);
     });
     console.log(`Game started for room ${code}`);
   }

@@ -1,5 +1,5 @@
-import { Teams } from "../../../shared/types/teams";
-import { Role } from "../../../shared/types/game";
+import { Teams } from "@botc/shared";
+import { Role } from "@botc/shared";
 
 export function calculateRoleDistribution(players: number) {
   const demons = 1;

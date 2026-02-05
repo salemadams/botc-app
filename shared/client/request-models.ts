@@ -1,0 +1,23 @@
+export interface CreateRoomRequest {
+  name: string;
+  scriptId: string;
+}
+
+export interface JoinRoomRequest {
+  code: string;
+  name: string;
+}
+
+export interface LeaveRoomRequest {
+  code: string;
+}
+
+export interface StartGameRequest {
+  code: string;
+  roleRequirements: { [key: string]: number };
+  enabledRoleIds: string[];
+}
+
+export interface NotifyPlayerRequest {
+  socketId: string;
+}

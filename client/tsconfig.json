@@ -3,7 +3,9 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@botc/shared": ["../shared/index.ts"],
+      "@botc/shared/*": ["../shared/*"]
     }
   },
   "include": [
