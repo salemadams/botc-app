@@ -61,6 +61,10 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.NotifyPlayer, ({ socketId }) =>
     io.to(socketId).emit(EventEnum.PlayerNotified),
   );
+
+  socket.on(RequestEnum.ToggleAlive, ({ socketId, code }) => {
+    gameService.toggleAlive(socketId, code);
+  });
 });
 
 server.listen(PORT, () => {

@@ -11,6 +11,7 @@ import {
   Role,
   RoleAssignedEvent,
   EventEnum,
+  KillToggledEvent,
 } from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
@@ -36,6 +37,22 @@ export class GameService {
     return newGameCode;
   }
 
+  toggleAlive(socketId: string, code: string): void {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. Player with socket ID ${socketId} was not modified`)
+      return
+    }
+    const player = room.players.find((p) => p.socketId === socketId)
+    if (!player) {
+      console.log(`Player with socket ID ${socketId} was not found`)
+      return
+    }
+    player.alive = !player.alive
+    const killToggledEvent: KillToggledEvent = { socketId: player.socketId, alive: player.alive };
+    this.io.to(code).emit(EventEnum.KillToggled, killToggledEvent);
+  }
+
   async createRoom(
     socket: Socket,
     name: string,
@@ -47,6 +64,7 @@ export class GameService {
       socketId: socket.id,
       name: name,
       host: true,
+      alive: true,
     };
 
     socket.join(gameCode);
@@ -103,6 +121,7 @@ export class GameService {
         socketId: `bot-${gameCode}-${i}`,
         name: testPlayerNames[i] || `Bot ${i + 1}`,
         host: false,
+        alive: true,
       };
 
       room.players.push(fakePlayer);
@@ -133,6 +152,7 @@ export class GameService {
       socketId: socket.id,
       name: name,
       host: false,
+      alive: true
     };
 
     socket.join(code);

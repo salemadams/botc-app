@@ -21,3 +21,8 @@ export interface StartGameRequest {
 export interface NotifyPlayerRequest {
   socketId: string;
 }
+
+export interface ToggleAliveRequest {
+  socketId: string;
+  code: string;
+}

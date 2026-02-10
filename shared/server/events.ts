@@ -8,4 +8,5 @@ export enum EventEnum {
   JoinRoomError = "joinRoomError",
   RoleAssigned = "roleAssigned",
   PlayerNotified = "playerNotified",
+  KillToggled = "KillToggled"
 }

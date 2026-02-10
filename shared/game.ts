@@ -11,6 +11,7 @@ export interface Player {
   name: string;
   host: boolean;
   role?: Role;
+  alive: boolean;
 }
 
 /**

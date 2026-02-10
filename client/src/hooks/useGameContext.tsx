@@ -16,6 +16,7 @@ import {
   PlayerLeftEvent,
   RoleAssignedEvent,
   EventEnum,
+  KillToggledEvent,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -79,6 +80,17 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       client.subscribe(EventEnum.PlayerNotified, () =>
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy),
       ),
+      client.subscribe(EventEnum.KillToggled, (event: KillToggledEvent) => {
+        setGameRoom((prevRoom?: GameRoom) => {
+          if (!prevRoom) return prevRoom;
+          return {
+            ...prevRoom,
+            players: prevRoom.players.map((p) =>
+              p.socketId === event.socketId ? { ...p, alive: event.alive } : p,
+            ),
+          };
+        });
+      })
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());

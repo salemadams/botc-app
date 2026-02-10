@@ -7,6 +7,7 @@ import {
   NotifyPlayerRequest,
   Player,
   RequestEnum,
+  ToggleAliveRequest,
 } from "@botc/shared";
 import { useState } from "react";
 
@@ -27,6 +28,18 @@ export default function SessionPage() {
     const notifyRequest: NotifyPlayerRequest = { socketId: socketId };
     client.send(RequestEnum.NotifyPlayer, notifyRequest);
   };
+  const toggleAlive = (sockedId: string) => {
+    if (gameRoom && gameRoom.code) {
+      const toggleAliveRequest: ToggleAliveRequest = { socketId: sockedId, code: gameRoom.code };
+      client.send(RequestEnum.ToggleAlive, toggleAliveRequest)
+      setSelectedPlayer((prevPlayer: Player | null) => {
+        if (!prevPlayer) {
+          return prevPlayer
+        }
+        return { ...prevPlayer, alive: !prevPlayer.alive }
+      })
+    }
+  }
 
   return (
     <View className="flex justify-center items-center w-full h-full">
@@ -109,7 +122,7 @@ export default function SessionPage() {
                         Team: {selectedPlayer.role.team}
                       </Text>
                       {currentPlayer?.host && (
-                        <View className="mt-4">
+                        <View className="flex flex-row gap-2 mt-4">
                           <Pressable
                             className="bg-blue-500 px-4 py-2 rounded-lg self-start"
                             onPress={() =>
@@ -118,6 +131,14 @@ export default function SessionPage() {
                           >
                             <Text className="text-white font-medium">
                               Notify
+                            </Text>
+                          </Pressable>
+                          <Pressable
+                            className="bg-blue-500 px-4 py-2 rounded-lg self-start"
+                            onPress={() => toggleAlive(selectedPlayer.socketId)}
+                          >
+                            <Text className="text-white font-medium">
+                              {selectedPlayer.alive ? 'Kill' : 'Revive'}
                             </Text>
                           </Pressable>
                         </View>

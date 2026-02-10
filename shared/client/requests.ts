@@ -4,4 +4,5 @@ export enum RequestEnum {
   LeaveRoom = "leaveRoom",
   StartGame = "startGame",
   NotifyPlayer = "notifyPlayer",
+  ToggleAlive = "toggleAlive"
 }

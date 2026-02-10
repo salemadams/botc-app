@@ -27,3 +27,8 @@ export interface RoleAssignedEvent {
 export interface JoinRoomErrorEvent {
   message: string;
 }
+
+export interface KillToggledEvent {
+  socketId: string;
+  alive: boolean
+}
