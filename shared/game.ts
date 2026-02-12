@@ -12,7 +12,6 @@ export interface Player {
   host: boolean;
   role?: Role;
   alive: boolean;
-  messages: Message[];
 }
 
 /**
