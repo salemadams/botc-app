@@ -12,6 +12,7 @@ export interface Player {
   host: boolean;
   role?: Role;
   alive: boolean;
+  messages: Message[];
 }
 
 /**
@@ -102,4 +103,9 @@ export interface GameRoom {
   players: Player[];
   phase: ServerPhase;
   scriptDetail: ScriptDetail;
+}
+
+export interface Message {
+  message: string;
+  fromSelf: boolean;
 }

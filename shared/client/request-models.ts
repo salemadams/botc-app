@@ -1,3 +1,5 @@
+import { Message } from "../game";
+
 export interface CreateRoomRequest {
   name: string;
   scriptId: string;
@@ -25,4 +27,10 @@ export interface NotifyPlayerRequest {
 export interface ToggleAliveRequest {
   socketId: string;
   code: string;
+}
+
+export interface SendMessageRequest {
+  fromSocket: string;
+  toSocket: string;
+  message: string;
 }

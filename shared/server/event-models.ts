@@ -1,4 +1,4 @@
-import { GameRoom, Player, Role } from "../game";
+import { GameRoom, Message, Player, Role } from "../game";
 export interface RoomCreatedEvent {
   room: GameRoom;
 }
@@ -31,4 +31,9 @@ export interface JoinRoomErrorEvent {
 export interface KillToggledEvent {
   socketId: string;
   alive: boolean
+}
+
+export interface MessageSentEvent {
+  fromSocket: string;
+  message: Message;
 }

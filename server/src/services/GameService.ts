@@ -152,7 +152,7 @@ export class GameService {
       socketId: socket.id,
       name: name,
       host: false,
-      alive: true
+      alive: true,
     };
 
     socket.join(code);

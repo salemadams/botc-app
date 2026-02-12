@@ -17,6 +17,8 @@ import {
   RoleAssignedEvent,
   EventEnum,
   KillToggledEvent,
+  MessageSentEvent,
+  Message,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -25,16 +27,28 @@ interface GameContextType {
   setGameRoom: (room?: GameRoom) => void;
   currentPlayer?: Player;
   setCurrentPlayer: (player?: Player) => void;
+  messages: Record<string, Message[]>
+  addMessage: (socketId: string, message: Message) => void
 }
 
 const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [gameRoom, setGameRoom] = useState<GameRoom | undefined>(undefined);
+  const [messages, setMessages] = useState<Record<string, Message[]>>({})
   const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>(
     undefined,
   );
   const { client } = useSocketContext();
+
+  const addMessage = (socketId: string, message: Message) => {
+    console.log(message)
+    setMessages((prev) => ({
+      ...prev,
+      [socketId]: [...(prev[socketId] ?? []), message],
+    }));
+  };
+
   useEffect(() => {
     const unsubscribers = [
       client.subscribe(EventEnum.PlayerJoined, (event: PlayerJoinedEvent) => {
@@ -90,6 +104,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             ),
           };
         });
+      }),
+      client.subscribe(EventEnum.MessageSent, (event: MessageSentEvent) => {
+        addMessage(event.fromSocket, event.message);
       })
     ];
 
@@ -97,7 +114,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   return (
     <GameContext.Provider
-      value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer }}
+      value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage }}
     >
       {children}
     </GameContext.Provider>

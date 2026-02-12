@@ -4,7 +4,7 @@ import { createServer } from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import { GameService } from "./services/GameService";
-import { RequestEnum, EventEnum } from "@botc/shared";
+import { RequestEnum, EventEnum, MessageSentEvent } from "@botc/shared";
 import scriptRoutes from "./resources/script/script.routes";
 
 const app = express();
@@ -65,6 +65,11 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.ToggleAlive, ({ socketId, code }) => {
     gameService.toggleAlive(socketId, code);
   });
+
+  socket.on(RequestEnum.SendMessage, ({ fromSocket, toSocket, message }) => {
+    const messageSent: MessageSentEvent = { fromSocket, message: { message, fromSelf: false } };
+    socket.to(toSocket).emit(EventEnum.MessageSent, messageSent)
+  })
 });
 
 server.listen(PORT, () => {
