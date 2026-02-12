@@ -102,7 +102,7 @@ export default function SessionPage() {
                     setModalVisible(true);
                   }}
                 >
-                  <Text className="text-base">{item.name}</Text>
+                  <Text className={`${!item.alive && 'text-red-500'} text-base`}>{item.name}</Text>
                   {currentPlayer?.host && (
                     <Text className="text-sm text-gray-600">
                       {item.role?.name}
