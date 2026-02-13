@@ -11,6 +11,7 @@ export interface Player {
   name: string;
   host: boolean;
   role?: Role;
+  alive: boolean;
 }
 
 /**
@@ -103,55 +104,7 @@ export interface GameRoom {
   scriptDetail: ScriptDetail;
 }
 
-export interface CreateRoomRequest {
-  name: string;
-  scriptId: string;
-}
-
-export interface JoinRoomRequest {
-  code: string;
-  name: string;
-}
-
-export interface LeaveRoomRequest {
-  code: string;
-}
-
-export interface StartGameRequest {
-  code: string;
-  roleRequirements: { [key: string]: number };
-  enabledRoleIds: string[];
-}
-
-export interface NotifyPlayerRequest {
-  socketId: string;
-}
-
-export interface RoomCreatedEvent {
-  room: GameRoom;
-}
-
-export interface RoomJoinedEvent {
-  currentPlayer: Player;
-  room: GameRoom;
-}
-
-export interface PlayerJoinedEvent {
-  player: Player;
-}
-
-export interface PlayerLeftEvent {
-  socketId: string;
-}
-
-export interface GameStartedEvent {
-  room: GameRoom;
-}
-
-export interface RoleAssignedEvent {
-  role: Role;
-}
-
-export interface JoinRoomErrorEvent {
+export interface Message {
   message: string;
+  fromSelf: boolean;
 }

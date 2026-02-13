@@ -1,16 +1,13 @@
-export enum SocketEvent {
-  CreateRoom = "createRoom",
-  JoinRoom = "joinRoom",
-  LeaveRoom = "leaveRoom",
-  StartGame = "startGame",
+export enum EventEnum {
   RoomCreated = "roomCreated",
   RoomJoined = "roomJoined",
   RoomLeft = "roomLeft",
   PlayerJoined = "playerJoined",
   PlayerLeft = "playerLeft",
   GameStarted = "gameStarted",
-  joinRoomError = "joinRoomError",
+  JoinRoomError = "joinRoomError",
   RoleAssigned = "roleAssigned",
-  NotifyPlayer = "notifyPlayer",
   PlayerNotified = "playerNotified",
+  KillToggled = "killToggled",
+  MessageSent = "messageSent"
 }

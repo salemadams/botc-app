@@ -3,8 +3,7 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
-import { CreateRoomRequest, RoomCreatedEvent, ScriptListItem } from "../../../../shared/types/game";
-import { SocketEvent } from "../../../../shared/types/events";
+import { CreateRoomRequest, RoomCreatedEvent, ScriptListItem, RequestEnum, EventEnum } from "@botc/shared";
 import { useGameContext } from "@/hooks/useGameContext";
 import { router } from "expo-router";
 import API from "../../config/api";
@@ -24,7 +23,7 @@ export default function HomePage() {
         setSelectedScript(data[0]);
       })
       .catch((err: any) => console.log(err));
-    client.subscribe(SocketEvent.RoomCreated, (event: RoomCreatedEvent) => {
+    client.subscribe(EventEnum.RoomCreated, (event: RoomCreatedEvent) => {
       setModalVisible(false);
       router.navigate("./game/lobby");
       setGameRoom(event.room);
@@ -36,7 +35,7 @@ export default function HomePage() {
     if (!selectedScript) return;
     setModalVisible(true);
     const createRequest: CreateRoomRequest = { name: userName, scriptId: selectedScript.scriptId };
-    client.send(SocketEvent.CreateRoom, createRequest);
+    client.send(RequestEnum.CreateRoom, createRequest);
   };
   const handleScriptSelect = (scriptId: string) => {
     const script = scripts.find((s) => s.scriptId === scriptId);
