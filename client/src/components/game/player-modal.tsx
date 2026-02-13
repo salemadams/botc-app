@@ -1,11 +1,11 @@
 import { KeyboardAvoidingView, Modal, Pressable, View, Text, ScrollView, TextInput } from "react-native";
 import { Message, Player } from "@botc/shared";
+import { useGameContext } from "@/hooks/useGameContext";
 
 interface PlayerModalProps {
   modalVisible: boolean;
   onModalClose: () => void;
   selectedPlayer: Player | null;
-  currentPlayer: Player;
   notifyPlayer: (socketId: string) => void;
   toggleAlive: (socketId: string) => void;
   messages: Record<string, Message[]>;
@@ -14,7 +14,8 @@ interface PlayerModalProps {
   setMessageInput: (value: string) => void;
 }
 
-export default function PlayerModal({ modalVisible, onModalClose, selectedPlayer, currentPlayer, notifyPlayer, toggleAlive, messages, sendMessage, messageInput, setMessageInput }: PlayerModalProps) {
+export default function PlayerModal({ modalVisible, onModalClose, selectedPlayer, notifyPlayer, toggleAlive, messages, sendMessage, messageInput, setMessageInput }: PlayerModalProps) {
+  const { currentPlayer } = useGameContext();
   return <Modal
     animationType="slide"
     transparent={true}

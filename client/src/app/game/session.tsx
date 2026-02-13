@@ -4,11 +4,11 @@ import { useGameContext } from "@/hooks/useGameContext";
 import { useSocketContext } from "@/hooks/useSocketContext";
 import {
   LeaveRoomRequest,
-  Player,
   RequestEnum,
 } from "@botc/shared";
 import { usePlayerModal } from "@/hooks/usePlayerModal";
 import PlayerModal from "@/components/game/player-modal";
+import PlayerList from "@/components/game/player-list";
 
 export default function SessionPage() {
   const { gameRoom, currentPlayer, messages, } = useGameContext();
@@ -58,35 +58,11 @@ export default function SessionPage() {
             <Text className="text-base">{gameRoom.players.find((p) => p.host)!.name}</Text>
           </Pressable>
           <Text className="text-lg font-semibold mb-2">Players:</Text>
-
-          <FlatList
-            data={gameRoom.players}
-            renderItem={({ item }: { item: Player }) =>
-              !item.host ? (
-                <Pressable
-                  className="p-3 border-b border-gray-100 flex-row justify-between items-center"
-                  onPress={() => {
-                    setSelectedPlayer(item);
-                    setModalVisible(true);
-                  }}
-                >
-                  <Text className={`${!item.alive && 'text-red-500'} text-base`}>{item.name}</Text>
-                  {currentPlayer?.host && (
-                    <Text className="text-sm text-gray-600">
-                      {item.role?.name}
-                    </Text>
-                  )}
-                </Pressable>
-              ) : null
-            }
-            keyExtractor={(item) => item.socketId}
-            contentContainerClassName="pb-4"
-          />
-
+          <PlayerList setSelectedPlayer={setSelectedPlayer} setModalVisible={setModalVisible}></PlayerList>
           <View className="mt-6">
             <Button title="Leave Game" onPress={leaveGame} />
           </View>
-          <PlayerModal modalVisible={modalVisible} onModalClose={onModalClose} selectedPlayer={selectedPlayer} currentPlayer={currentPlayer} notifyPlayer={notifyPlayer} toggleAlive={toggleAlive} messages={messages} sendMessage={sendMessage} messageInput={messageInput} setMessageInput={setMessageInput}></PlayerModal>
+          <PlayerModal modalVisible={modalVisible} onModalClose={onModalClose} selectedPlayer={selectedPlayer} notifyPlayer={notifyPlayer} toggleAlive={toggleAlive} messages={messages} sendMessage={sendMessage} messageInput={messageInput} setMessageInput={setMessageInput}></PlayerModal>
         </View>
       ) : (
         <Text>...Loading</Text>
