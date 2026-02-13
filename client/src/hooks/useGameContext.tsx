@@ -42,7 +42,6 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const { client } = useSocketContext();
 
   const addMessage = (socketId: string, message: Message) => {
-    console.log(message)
     setMessages((prev) => ({
       ...prev,
       [socketId]: [...(prev[socketId] ?? []), message],
