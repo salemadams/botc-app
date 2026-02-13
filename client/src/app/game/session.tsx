@@ -1,4 +1,4 @@
-import { View, Text, Button, Pressable, FlatList, } from "react-native";
+import { View, Text, Button, Pressable, } from "react-native";
 import { router } from "expo-router";
 import { useGameContext } from "@/hooks/useGameContext";
 import { useSocketContext } from "@/hooks/useSocketContext";
@@ -9,6 +9,7 @@ import {
 import { usePlayerModal } from "@/hooks/usePlayerModal";
 import PlayerModal from "@/components/game/player-modal";
 import PlayerList from "@/components/game/player-list";
+import RoleCard from "@/components/game/role-card";
 
 export default function SessionPage() {
   const { gameRoom, currentPlayer, messages, } = useGameContext();
@@ -29,24 +30,7 @@ export default function SessionPage() {
         <View className="w-full px-4">
           <Text className="text-xl font-bold mb-2">Game Session</Text>
           <Text className="text-base mb-4">Game Code: {gameRoom.code}</Text>
-
-          {currentPlayer.role && (
-            <View className="mb-6 p-4 bg-gray-100 rounded-lg">
-              <Text className="text-lg font-semibold mb-1">Your Role</Text>
-              <Text className="text-2xl font-bold">
-                {currentPlayer.role.name}
-              </Text>
-              <Text className="text-sm text-gray-600 capitalize">
-                {currentPlayer.role.team}
-              </Text>
-              {currentPlayer.role.ability && (
-                <Text className="text-sm text-gray-700 mt-2">
-                  {currentPlayer.role.ability}
-                </Text>
-              )}
-            </View>
-          )}
-
+          <RoleCard></RoleCard>
           <Text className="text-lg font-semibold mb-2">Host:</Text>
           <Pressable
             className="p-3 border-b border-gray-100 flex-row justify-between items-center"
