@@ -1,5 +1,9 @@
-import { Teams } from "@botc/shared";
+import { Teams, Player } from "@botc/shared";
 import { Role } from "@botc/shared";
+
+export function getNonHostPlayerCount(players: Player[]): number {
+  return players.filter((p) => !p.host).length;
+}
 
 export function calculateRoleDistribution(players: number) {
   const demons = 1;
