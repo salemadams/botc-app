@@ -12,6 +12,7 @@ import {
   RoleAssignedEvent,
   EventEnum,
   KillToggledEvent,
+  DayChangedEvent,
 } from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
@@ -35,6 +36,21 @@ export class GameService {
       newGameCode = String(Math.floor(Math.random() * 9000) + 1000);
     } while (rooms.has(newGameCode));
     return newGameCode;
+  }
+
+  changeDay(code: string, day: number) {
+    if (isNaN(day) || day < 1) {
+      console.log(`Invalid day value ${day}. The day was not changed.`)
+      return
+    }
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The day was not changed.`)
+      return
+    }
+    room.day = day
+    const dayChangedEvent: DayChangedEvent = { day }
+    this.io.to(code).emit(EventEnum.DayChanged, dayChangedEvent)
   }
 
   toggleAlive(socketId: string, code: string): void {
@@ -88,6 +104,7 @@ export class GameService {
         meta: script[0],
         roles: roles,
       },
+      day: 1
     };
     this.gameRooms.set(gameCode, newRoom);
 

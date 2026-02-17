@@ -19,6 +19,7 @@ import {
   KillToggledEvent,
   MessageSentEvent,
   Message,
+  DayChangedEvent,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -29,6 +30,8 @@ interface GameContextType {
   setCurrentPlayer: (player?: Player) => void;
   messages: Record<string, Message[]>
   addMessage: (socketId: string, message: Message) => void
+  day: number,
+  setDay: (day: number) => void
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -39,6 +42,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>(
     undefined,
   );
+  const [day, setDay] = useState(1)
   const { client } = useSocketContext();
 
   const addMessage = (socketId: string, message: Message) => {
@@ -70,6 +74,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       client.subscribe(EventEnum.RoomLeft, () => {
         setGameRoom(undefined);
         router.back();
+      }),
+      client.subscribe(EventEnum.DayChanged, (event: DayChangedEvent) => {
+        setDay(event.day)
       }),
       client.subscribe(EventEnum.JoinRoomError, (event: JoinRoomErrorEvent) =>
         console.log(event.message),
@@ -106,14 +113,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       }),
       client.subscribe(EventEnum.MessageSent, (event: MessageSentEvent) => {
         addMessage(event.fromSocket, event.message);
-      })
+      }),
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
   return (
     <GameContext.Provider
-      value={{ gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage }}
+      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage }}
     >
       {children}
     </GameContext.Provider>

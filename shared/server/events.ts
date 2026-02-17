@@ -9,5 +9,6 @@ export enum EventEnum {
   RoleAssigned = "roleAssigned",
   PlayerNotified = "playerNotified",
   KillToggled = "killToggled",
-  MessageSent = "messageSent"
+  MessageSent = "messageSent",
+  DayChanged = "dayChanged",
 }

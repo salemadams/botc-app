@@ -5,5 +5,6 @@ export enum RequestEnum {
   StartGame = "startGame",
   NotifyPlayer = "notifyPlayer",
   ToggleAlive = "toggleAlive",
-  SendMessage = "sendMessage"
+  SendMessage = "sendMessage",
+  ChangeDay = "changeDay"
 }

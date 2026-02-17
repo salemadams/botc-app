@@ -1,4 +1,5 @@
 import { View, Text, Button, Pressable, } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGameContext } from "@/hooks/useGameContext";
 import { useSocketContext } from "@/hooks/useSocketContext";
@@ -10,10 +11,14 @@ import { usePlayerModal } from "@/hooks/usePlayerModal";
 import PlayerModal from "@/components/game/player-modal";
 import PlayerList from "@/components/game/player-list";
 import RoleCard from "@/components/game/role-card";
+import { useHostListModal } from "@/hooks/useHostListModal";
+import HostListModal from "@/components/game/host-list-modal";
+import DaySelector from "@/components/game/day-selector";
 
 export default function SessionPage() {
   const { gameRoom, currentPlayer, messages, } = useGameContext();
-  const { onModalClose, sendMessage, toggleAlive, notifyPlayer, selectedPlayer, setSelectedPlayer, modalVisible, setModalVisible, messageInput, setMessageInput } = usePlayerModal();
+  const { onModalClose, sendMessage, toggleAlive, notifyPlayer, selectedPlayer, setSelectedPlayer, playerModalVisible, setPlayerModalVisible, messageInput, setMessageInput } = usePlayerModal();
+  const { hostListVisible, reminderInfo, setHostListVisible } = useHostListModal()
   const { client } = useSocketContext();
 
   const leaveGame = () => {
@@ -25,10 +30,16 @@ export default function SessionPage() {
   };
 
   return (
-    <View className="flex justify-center items-center w-full h-full">
+    <View className="justify-center items-center w-full h-full">
       {gameRoom && currentPlayer ? (
         <View className="w-full px-4">
-          <Text className="text-xl font-bold mb-2">Game Session</Text>
+          <DaySelector></DaySelector>
+          <View className="flex-row justify-between">
+            <Text className="text-xl font-bold mb-2">Game Session</Text>
+            <Pressable onPress={() => setHostListVisible(true)}>
+              <Ionicons name="moon" size={24} color="black" />
+            </Pressable>
+          </View>
           <Text className="text-base mb-4">Game Code: {gameRoom.code}</Text>
           {!currentPlayer.host &&
             <RoleCard></RoleCard>}
@@ -37,17 +48,19 @@ export default function SessionPage() {
             className="p-3 border-b border-gray-100 flex-row justify-between items-center"
             onPress={() => {
               setSelectedPlayer(gameRoom.players.find((p) => p.host)!);
-              setModalVisible(true);
+              setPlayerModalVisible(true);
             }}
           >
             <Text className="text-base">{gameRoom.players.find((p) => p.host)!.name}</Text>
           </Pressable>
           <Text className="text-lg font-semibold mb-2">Players:</Text>
-          <PlayerList setSelectedPlayer={setSelectedPlayer} setModalVisible={setModalVisible}></PlayerList>
+          <PlayerList setSelectedPlayer={setSelectedPlayer} setModalVisible={setPlayerModalVisible}></PlayerList>
           <View className="mt-6">
             <Button title="Leave Game" onPress={leaveGame} />
           </View>
-          <PlayerModal modalVisible={modalVisible} onModalClose={onModalClose} selectedPlayer={selectedPlayer} notifyPlayer={notifyPlayer} toggleAlive={toggleAlive} messages={messages} sendMessage={sendMessage} messageInput={messageInput} setMessageInput={setMessageInput}></PlayerModal>
+          {reminderInfo &&
+            <HostListModal modalVisible={hostListVisible} onClose={() => setHostListVisible(false)} reminderInfo={reminderInfo}></HostListModal>}
+          <PlayerModal modalVisible={playerModalVisible} onModalClose={onModalClose} selectedPlayer={selectedPlayer} notifyPlayer={notifyPlayer} toggleAlive={toggleAlive} messages={messages} sendMessage={sendMessage} messageInput={messageInput} setMessageInput={setMessageInput}></PlayerModal>
         </View>
       ) : (
         <Text>...Loading</Text>

@@ -37,3 +37,7 @@ export interface MessageSentEvent {
   fromSocket: string;
   message: Message;
 }
+
+export interface DayChangedEvent {
+  day: number
+}
