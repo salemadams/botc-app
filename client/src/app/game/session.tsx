@@ -30,7 +30,8 @@ export default function SessionPage() {
         <View className="w-full px-4">
           <Text className="text-xl font-bold mb-2">Game Session</Text>
           <Text className="text-base mb-4">Game Code: {gameRoom.code}</Text>
-          <RoleCard></RoleCard>
+          {!currentPlayer.host &&
+            <RoleCard></RoleCard>}
           <Text className="text-lg font-semibold mb-2">Host:</Text>
           <Pressable
             className="p-3 border-b border-gray-100 flex-row justify-between items-center"
