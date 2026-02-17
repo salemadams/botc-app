@@ -34,3 +34,8 @@ export interface SendMessageRequest {
   toSocket: string;
   message: string;
 }
+
+export interface ChangeDayRequest {
+  code: string
+  day: number
+}

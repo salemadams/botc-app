@@ -69,6 +69,10 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.SendMessage, ({ fromSocket, toSocket, message }) => {
     const messageSent: MessageSentEvent = { fromSocket, message: { message, fromSelf: false } };
     socket.to(toSocket).emit(EventEnum.MessageSent, messageSent)
+  });
+
+  socket.on(RequestEnum.ChangeDay, ({ code, day }) => {
+    gameService.changeDay(code, day)
   })
 });
 

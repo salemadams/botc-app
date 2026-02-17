@@ -102,6 +102,16 @@ export interface GameRoom {
   players: Player[];
   phase: ServerPhase;
   scriptDetail: ScriptDetail;
+  day: number
+}
+
+export interface HostReminderInfo {
+  socketId: string,
+  playerName: string,
+  roleName: string,
+  firstNight: boolean,
+  details: string,
+  priority: number,
 }
 
 export interface Message {

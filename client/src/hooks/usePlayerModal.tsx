@@ -6,7 +6,7 @@ import { useSocketContext } from "./useSocketContext";
 export function usePlayerModal() {
   const { gameRoom, currentPlayer, addMessage } = useGameContext();
   const { client } = useSocketContext()
-  const [modalVisible, setModalVisible] = useState(false);
+  const [playerModalVisible, setPlayerModalVisible] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [messageInput, setMessageInput] = useState('')
 
@@ -15,7 +15,7 @@ export function usePlayerModal() {
     client.send(RequestEnum.NotifyPlayer, notifyRequest);
   };
   const onModalClose = () => {
-    setModalVisible(false)
+    setPlayerModalVisible(false)
     setMessageInput('')
   }
   const sendMessage = () => {
@@ -37,5 +37,5 @@ export function usePlayerModal() {
       })
     }
   }
-  return { onModalClose, sendMessage, toggleAlive, notifyPlayer, selectedPlayer, setSelectedPlayer, modalVisible, setModalVisible, messageInput, setMessageInput }
+  return { onModalClose, sendMessage, toggleAlive, notifyPlayer, selectedPlayer, setSelectedPlayer, playerModalVisible, setPlayerModalVisible, messageInput, setMessageInput }
 }
