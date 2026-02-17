@@ -36,9 +36,10 @@ export default function SessionPage() {
           <DaySelector></DaySelector>
           <View className="flex-row justify-between">
             <Text className="text-xl font-bold mb-2">Game Session</Text>
-            <Pressable onPress={() => setHostListVisible(true)}>
-              <Ionicons name="moon" size={24} color="black" />
-            </Pressable>
+            {currentPlayer.host &&
+              <Pressable onPress={() => setHostListVisible(true)}>
+                <Ionicons name="moon" size={24} color="black" />
+              </Pressable>}
           </View>
           <Text className="text-base mb-4">Game Code: {gameRoom.code}</Text>
           {!currentPlayer.host &&
