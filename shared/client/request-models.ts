@@ -39,3 +39,15 @@ export interface ChangeDayRequest {
   code: string
   day: number
 }
+
+export interface StartTimerRequest {
+  code: string
+}
+
+export interface PauseTimerRequest {
+  code: string
+}
+
+export interface ResetTimerRequest {
+  code: string
+}

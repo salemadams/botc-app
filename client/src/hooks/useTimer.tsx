@@ -7,8 +7,8 @@ export function useTimer() {
   const [running, setRunning] = useState(false)
   const intervalRef = useRef(0)
 
-  const handleStartClick = () => {
-    if (intervalRef.current && running) return
+  const startTimer = () => {
+    if (intervalRef.current) return
     setRunning(true)
     const intervalId = setInterval(() => {
       setTimeRemaining((prev) => {
@@ -23,17 +23,16 @@ export function useTimer() {
     }, 1000);
     intervalRef.current = intervalId;
   }
-  const handlePauseClick = () => {
+  const pauseTimer = () => {
     setRunning(false)
     clearInterval(intervalRef.current)
     intervalRef.current = 0
   }
-  const handleResetClick = () => {
-    if (!intervalRef.current) return
+  const resetTimer = () => {
     setRunning(false)
     clearInterval(intervalRef.current)
     intervalRef.current = 0
     setTimeRemaining(minutes * 60 + seconds)
   }
-  return { timeRemaining, handleStartClick, handlePauseClick, handleResetClick, running }
+  return { timeRemaining, startTimer, pauseTimer, resetTimer, running }
 }

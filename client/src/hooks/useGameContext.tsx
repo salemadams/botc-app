@@ -1,3 +1,4 @@
+import { useTimer } from "@/hooks/useTimer";
 import {
   createContext,
   ReactNode,
@@ -31,7 +32,9 @@ interface GameContextType {
   messages: Record<string, Message[]>
   addMessage: (socketId: string, message: Message) => void
   day: number,
-  setDay: (day: number) => void
+  setDay: (day: number) => void,
+  timeRemaining: number,
+  running: boolean
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -44,6 +47,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   );
   const [day, setDay] = useState(1)
   const { client } = useSocketContext();
+  const { timeRemaining, startTimer, resetTimer, pauseTimer, running } = useTimer()
 
   const addMessage = (socketId: string, message: Message) => {
     setMessages((prev) => ({
@@ -114,13 +118,16 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       client.subscribe(EventEnum.MessageSent, (event: MessageSentEvent) => {
         addMessage(event.fromSocket, event.message);
       }),
+      client.subscribe(EventEnum.TimerStarted, startTimer),
+      client.subscribe(EventEnum.TimerPaused, pauseTimer),
+      client.subscribe(EventEnum.TimerReset, resetTimer)
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
   return (
     <GameContext.Provider
-      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage }}
+      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage, timeRemaining, running }}
     >
       {children}
     </GameContext.Provider>

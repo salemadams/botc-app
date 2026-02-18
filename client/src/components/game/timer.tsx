@@ -1,17 +1,31 @@
 import { useGameContext } from "@/hooks/useGameContext";
+import { useSocketContext } from "@/hooks/useSocketContext";
+import { PauseTimerRequest, RequestEnum, ResetTimerRequest, StartTimerRequest, } from "@botc/shared";
 import { View, Text, Pressable } from "react-native";
 
-interface TimerProps {
-  timeRemaining: number
-  running: boolean
-  handleStartClick: () => void
-  handlePauseClick: () => void
-  handleResetClick: () => void
-}
-export default function Timer({ timeRemaining, running, handleStartClick, handlePauseClick, handleResetClick }: TimerProps) {
-  const { currentPlayer } = useGameContext()
+export default function Timer() {
+  const { currentPlayer, gameRoom, running, timeRemaining } = useGameContext()
+  const { client } = useSocketContext()
   const displayMinutes = String(Math.floor(timeRemaining / 60)).padStart(2, '0')
   const displaySeconds = String(timeRemaining % 60).padStart(2, '0')
+
+  const handleStartPress = () => {
+    if (!gameRoom) return
+    const startTimerRequest: StartTimerRequest = { code: gameRoom.code }
+    client.send(RequestEnum.StartTimer, startTimerRequest)
+    console.log('Timer Start Sent')
+  }
+  const handlePausePress = () => {
+    if (!gameRoom) return
+    const pauseTimerRequest: PauseTimerRequest = { code: gameRoom.code }
+    client.send(RequestEnum.PauseTimer, pauseTimerRequest)
+  }
+
+  const handleResetPress = () => {
+    if (!gameRoom) return
+    const resetTimerRequest: ResetTimerRequest = { code: gameRoom.code }
+    client.send(RequestEnum.ResetTimer, resetTimerRequest)
+  }
 
   return (
     <View className="bg-gray-100 rounded-lg p-4 mb-2 items-center">
@@ -22,13 +36,13 @@ export default function Timer({ timeRemaining, running, handleStartClick, handle
         <View className="flex-row gap-3">
           <Pressable
             className="bg-blue-500 px-4 py-2 rounded-lg"
-            onPress={running ? handlePauseClick : handleStartClick}
+            onPress={running ? handlePausePress : handleStartPress}
           >
             <Text className="text-white font-medium">{running ? 'Pause' : 'Start'}</Text>
           </Pressable>
           <Pressable
             className="bg-blue-500 px-4 py-2 rounded-lg"
-            onPress={handleResetClick}
+            onPress={handleResetPress}
           >
             <Text className="text-white font-medium">Reset</Text>
           </Pressable>

@@ -250,4 +250,31 @@ export class GameService {
     });
     console.log(`Game started for room ${code}`);
   }
+
+  startTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to start`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerStarted)
+  }
+
+  pauseTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to pause`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerPaused)
+  }
+
+  resetTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to reset`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerReset)
+  }
 }

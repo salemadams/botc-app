@@ -74,6 +74,18 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.ChangeDay, ({ code, day }) => {
     gameService.changeDay(code, day)
   })
+
+  socket.on(RequestEnum.StartTimer, ({ code }) => {
+    gameService.startTimer(code)
+  })
+
+  socket.on(RequestEnum.PauseTimer, ({ code }) => {
+    gameService.pauseTimer(code)
+  })
+
+  socket.on(RequestEnum.ResetTimer, ({ code }) => {
+    gameService.resetTimer(code)
+  })
 });
 
 server.listen(PORT, () => {

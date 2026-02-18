@@ -6,5 +6,8 @@ export enum RequestEnum {
   NotifyPlayer = "notifyPlayer",
   ToggleAlive = "toggleAlive",
   SendMessage = "sendMessage",
-  ChangeDay = "changeDay"
+  ChangeDay = "changeDay",
+  StartTimer = "startTimer",
+  ResetTimer = "resetTimer",
+  PauseTimer = "pauseTimer"
 }
