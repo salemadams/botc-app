@@ -14,6 +14,7 @@ import RoleCard from "@/components/game/role-card";
 import { useHostListModal } from "@/hooks/useHostListModal";
 import HostListModal from "@/components/game/host-list-modal";
 import DaySelector from "@/components/game/day-selector";
+import Timer from "@/components/game/timer";
 
 export default function SessionPage() {
   const { gameRoom, currentPlayer, messages, } = useGameContext();
@@ -34,6 +35,7 @@ export default function SessionPage() {
       {gameRoom && currentPlayer ? (
         <View className="w-full px-4">
           <DaySelector></DaySelector>
+          <Timer></Timer>
           <View className="flex-row justify-between">
             <Text className="text-xl font-bold mb-2">Game Session</Text>
             {currentPlayer.host &&
