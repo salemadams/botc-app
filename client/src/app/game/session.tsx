@@ -15,10 +15,12 @@ import { useHostListModal } from "@/hooks/useHostListModal";
 import HostListModal from "@/components/game/host-list-modal";
 import DaySelector from "@/components/game/day-selector";
 import Timer from "@/components/game/timer";
+import { useTimer } from "@/hooks/useTimer";
 
 export default function SessionPage() {
   const { gameRoom, currentPlayer, messages, } = useGameContext();
   const { onModalClose, sendMessage, toggleAlive, notifyPlayer, selectedPlayer, setSelectedPlayer, playerModalVisible, setPlayerModalVisible, messageInput, setMessageInput } = usePlayerModal();
+  const { timeRemaining, handleStartClick, handleResetClick, handlePauseClick, running } = useTimer()
   const { hostListVisible, reminderInfo, setHostListVisible } = useHostListModal()
   const { client } = useSocketContext();
 
@@ -35,7 +37,7 @@ export default function SessionPage() {
       {gameRoom && currentPlayer ? (
         <View className="w-full px-4">
           <DaySelector></DaySelector>
-          <Timer></Timer>
+          <Timer timeRemaining={timeRemaining} running={running} handleStartClick={handleStartClick} handlePauseClick={handlePauseClick} handleResetClick={handleResetClick}></Timer>
           <View className="flex-row justify-between">
             <Text className="text-xl font-bold mb-2">Game Session</Text>
             {currentPlayer.host &&
