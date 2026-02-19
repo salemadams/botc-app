@@ -9,5 +9,6 @@ export enum RequestEnum {
   ChangeDay = "changeDay",
   StartTimer = "startTimer",
   ResetTimer = "resetTimer",
-  PauseTimer = "pauseTimer"
+  PauseTimer = "pauseTimer",
+  ChangeTimer = "changeTimer",
 }

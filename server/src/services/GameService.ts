@@ -13,6 +13,7 @@ import {
   EventEnum,
   KillToggledEvent,
   DayChangedEvent,
+  TimerChangedEvent,
 } from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
@@ -104,7 +105,8 @@ export class GameService {
         meta: script[0],
         roles: roles,
       },
-      day: 1
+      day: 1,
+      timer: 600 //10 minutes (standard day time for BOTC)
     };
     this.gameRooms.set(gameCode, newRoom);
 
@@ -276,5 +278,16 @@ export class GameService {
       return
     }
     this.io.to(code).emit(EventEnum.TimerReset)
+  }
+
+  changeTimer(code: string, time: number) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer was not changed`)
+      return
+    }
+    room.timer = time
+    const timerChangedEvent: TimerChangedEvent = { time: time }
+    this.io.to(code).emit(EventEnum.TimerChanged, timerChangedEvent)
   }
 }

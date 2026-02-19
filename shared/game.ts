@@ -103,6 +103,7 @@ export interface GameRoom {
   phase: ServerPhase;
   scriptDetail: ScriptDetail;
   day: number
+  timer: number
 }
 
 export interface HostReminderInfo {

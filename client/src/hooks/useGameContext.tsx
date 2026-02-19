@@ -21,6 +21,7 @@ import {
   MessageSentEvent,
   Message,
   DayChangedEvent,
+  TimerChangedEvent,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -34,7 +35,8 @@ interface GameContextType {
   day: number,
   setDay: (day: number) => void,
   timeRemaining: number,
-  running: boolean
+  setTimeRemaining: (time: number) => void
+  running: boolean,
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -47,7 +49,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   );
   const [day, setDay] = useState(1)
   const { client } = useSocketContext();
-  const { timeRemaining, startTimer, resetTimer, pauseTimer, running } = useTimer()
+  const { timeRemaining, setTimeRemaining, startTimer, resetTimer, pauseTimer, running, prevTimeRemainingRef } = useTimer()
 
   const addMessage = (socketId: string, message: Message) => {
     setMessages((prev) => ({
@@ -120,14 +122,18 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       }),
       client.subscribe(EventEnum.TimerStarted, startTimer),
       client.subscribe(EventEnum.TimerPaused, pauseTimer),
-      client.subscribe(EventEnum.TimerReset, resetTimer)
+      client.subscribe(EventEnum.TimerReset, resetTimer),
+      client.subscribe(EventEnum.TimerChanged, (event: TimerChangedEvent) => {
+        prevTimeRemainingRef.current = event.time
+        setTimeRemaining(event.time)
+      })
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());
   }, []);
   return (
     <GameContext.Provider
-      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage, timeRemaining, running }}
+      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage, timeRemaining, setTimeRemaining, running }}
     >
       {children}
     </GameContext.Provider>

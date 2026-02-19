@@ -14,4 +14,5 @@ export enum EventEnum {
   TimerStarted = "timerStarted",
   TimerPaused = "timerPaused",
   TimerReset = "timerReset",
+  TimerChanged = "timerChanged",
 }

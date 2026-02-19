@@ -1,11 +1,10 @@
 import { useState, useRef } from "react"
 
 export function useTimer() {
-  const [minutes, setMinutes] = useState(1)
-  const [seconds, setSeconds] = useState(0)
-  const [timeRemaining, setTimeRemaining] = useState(minutes * 60 + seconds)
+  const [timeRemaining, setTimeRemaining] = useState(600)
   const [running, setRunning] = useState(false)
   const intervalRef = useRef(0)
+  const prevTimeRemainingRef = useRef(600)
 
   const startTimer = () => {
     if (intervalRef.current) return
@@ -32,7 +31,7 @@ export function useTimer() {
     setRunning(false)
     clearInterval(intervalRef.current)
     intervalRef.current = 0
-    setTimeRemaining(minutes * 60 + seconds)
+    setTimeRemaining(prevTimeRemainingRef.current)
   }
-  return { timeRemaining, startTimer, pauseTimer, resetTimer, running }
+  return { prevTimeRemainingRef, timeRemaining, setTimeRemaining, startTimer, pauseTimer, resetTimer, running }
 }

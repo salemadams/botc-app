@@ -41,3 +41,7 @@ export interface MessageSentEvent {
 export interface DayChangedEvent {
   day: number
 }
+
+export interface TimerChangedEvent {
+  time: number
+}

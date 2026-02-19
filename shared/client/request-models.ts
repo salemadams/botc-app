@@ -51,3 +51,8 @@ export interface PauseTimerRequest {
 export interface ResetTimerRequest {
   code: string
 }
+
+export interface ChangeTimerRequest {
+  code: string
+  time: number
+}

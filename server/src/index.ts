@@ -86,6 +86,10 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.ResetTimer, ({ code }) => {
     gameService.resetTimer(code)
   })
+
+  socket.on(RequestEnum.ChangeTimer, ({ code, time }) => {
+    gameService.changeTimer(code, time)
+  })
 });
 
 server.listen(PORT, () => {
