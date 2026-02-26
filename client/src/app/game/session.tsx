@@ -6,6 +6,7 @@ import { useSocketContext } from "@/hooks/useSocketContext";
 import {
   LeaveRoomRequest,
   RequestEnum,
+  ToggleNightRequest,
 } from "@botc/shared";
 import { usePlayerModal } from "@/hooks/usePlayerModal";
 import PlayerModal from "@/components/game/player-modal";
@@ -29,11 +30,29 @@ export default function SessionPage() {
     }
   };
 
+  const toggleNight = () => {
+    if (gameRoom && gameRoom.code) {
+      const toggleNightRequest: ToggleNightRequest = { code: gameRoom.code }
+      client.send(RequestEnum.ToggleNight, toggleNightRequest)
+    }
+  }
+
   return (
     <View className="justify-center items-center w-full h-full">
       {gameRoom && currentPlayer ? (
         <View className="w-full px-4">
           <DaySelector></DaySelector>
+          {currentPlayer.host && (
+            <View className="items-center mb-2">
+              <Pressable
+                className="flex-row items-center gap-2 px-4 py-2 bg-gray-200 rounded-full"
+                onPress={toggleNight}
+              >
+                <Ionicons name="sunny" size={18} color="orange" />
+                <Text className="text-sm font-semibold">Switch to {gameRoom?.isNight ? 'Day' : 'Night'}</Text>
+              </Pressable>
+            </View>
+          )}
           <View className="flex-row justify-between">
             <Text className="text-xl font-bold mb-2">Game Session</Text>
             {currentPlayer.host &&

@@ -39,3 +39,7 @@ export interface ChangeDayRequest {
   code: string
   day: number
 }
+
+export interface ToggleNightRequest {
+  code: string
+}

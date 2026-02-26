@@ -101,6 +101,7 @@ export interface GameRoom {
   code: string;
   players: Player[];
   phase: ServerPhase;
+  isNight: boolean;
   scriptDetail: ScriptDetail;
   day: number
 }

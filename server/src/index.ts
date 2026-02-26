@@ -74,6 +74,10 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.ChangeDay, ({ code, day }) => {
     gameService.changeDay(code, day)
   })
+
+  socket.on(RequestEnum.ToggleNight, ({ code }) => {
+    gameService.toggleNight(code)
+  })
 });
 
 server.listen(PORT, () => {

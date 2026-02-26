@@ -17,7 +17,7 @@ export default function DaySelector() {
       <Pressable onPress={() => changeDay(day - 1)} disabled={day <= 1} style={{ opacity: day > 1 ? 1 : 0 }}>
         <Ionicons name="chevron-back" size={24}></Ionicons>
       </Pressable>}
-    <Text className="text-lg font-semibold">Day: {day}</Text>
+    <Text className="text-lg font-semibold">{gameRoom?.isNight ? 'Night' : 'Day'}: {day}</Text>
     {currentPlayer?.host &&
       <Pressable onPress={() => changeDay(day + 1)}>
         <Ionicons name="chevron-forward" size={24}></Ionicons>

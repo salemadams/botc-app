@@ -20,6 +20,7 @@ import {
   MessageSentEvent,
   Message,
   DayChangedEvent,
+  NightToggledEvent,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -114,6 +115,15 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       client.subscribe(EventEnum.MessageSent, (event: MessageSentEvent) => {
         addMessage(event.fromSocket, event.message);
       }),
+      client.subscribe(EventEnum.NightToggled, (event: NightToggledEvent) => {
+        setGameRoom((prevRoom?: GameRoom) => {
+          if (!prevRoom) return prevRoom;
+          return {
+            ...prevRoom,
+            isNight: event.isNight
+          }
+        })
+      })
     ];
 
     return () => unsubscribers.forEach((unsub) => unsub());

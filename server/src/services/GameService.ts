@@ -13,6 +13,7 @@ import {
   EventEnum,
   KillToggledEvent,
   DayChangedEvent,
+  NightToggledEvent,
 } from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
@@ -36,6 +37,17 @@ export class GameService {
       newGameCode = String(Math.floor(Math.random() * 9000) + 1000);
     } while (rooms.has(newGameCode));
     return newGameCode;
+  }
+
+  toggleNight(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The time of day was not changed.`)
+      return
+    }
+    room.isNight = !room.isNight
+    const nightToggledEvent: NightToggledEvent = { isNight: room.isNight }
+    this.io.to(code).emit(EventEnum.NightToggled, nightToggledEvent)
   }
 
   changeDay(code: string, day: number) {
@@ -100,6 +112,7 @@ export class GameService {
       code: gameCode,
       players: [player],
       phase: ServerPhase.lobby,
+      isNight: false,
       scriptDetail: {
         meta: script[0],
         roles: roles,
