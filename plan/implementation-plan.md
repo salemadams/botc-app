@@ -38,6 +38,15 @@ A **Storyteller Assistant** for in-person Blood on the Clocktower games. Each pl
 
 ## Implementation Phases
 
+### Phase 0: State Management Refactor
+**Goal:** Replace React Context with Zustand before adding more features. Eliminates unnecessary re-renders via per-field selectors and removes Provider boilerplate.
+
+| # | Task | Description |
+|---|------|-------------|
+| 0.1 | Migrate GameContext to Zustand | Install `zustand`, create `stores/useGameStore.ts` with all game state and actions, extract socket subscriptions to a standalone `subscribeToGameEvents` function, update all 14 consumers to use `useGameStore((s) => s.field)` selectors, delete `useGameContext.tsx`. |
+
+---
+
 ### Phase 1: Complete Core Features
 **Goal:** Finish the features that make the app functionally complete for a real game.
 
