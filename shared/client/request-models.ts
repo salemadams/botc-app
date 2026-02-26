@@ -43,3 +43,20 @@ export interface ChangeDayRequest {
 export interface ToggleNightRequest {
   code: string
 }
+
+export interface StartTimerRequest {
+  code: string
+}
+
+export interface PauseTimerRequest {
+  code: string
+}
+
+export interface ResetTimerRequest {
+  code: string
+}
+
+export interface ChangeTimerRequest {
+  code: string
+  time: number
+}

@@ -78,6 +78,22 @@ io.on("connection", (socket) => {
   socket.on(RequestEnum.ToggleNight, ({ code }) => {
     gameService.toggleNight(code)
   })
+
+  socket.on(RequestEnum.StartTimer, ({ code }) => {
+    gameService.startTimer(code)
+  })
+
+  socket.on(RequestEnum.PauseTimer, ({ code }) => {
+    gameService.pauseTimer(code)
+  })
+
+  socket.on(RequestEnum.ResetTimer, ({ code }) => {
+    gameService.resetTimer(code)
+  })
+
+  socket.on(RequestEnum.ChangeTimer, ({ code, time }) => {
+    gameService.changeTimer(code, time)
+  })
 });
 
 server.listen(PORT, () => {

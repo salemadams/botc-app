@@ -11,5 +11,9 @@ export enum EventEnum {
   KillToggled = "killToggled",
   MessageSent = "messageSent",
   DayChanged = "dayChanged",
-  NightToggled = "nightToggled"
+  NightToggled = "nightToggled",
+  TimerStarted = "timerStarted",
+  TimerPaused = "timerPaused",
+  TimerReset = "timerReset",
+  TimerChanged = "timerChanged",
 }

@@ -14,6 +14,7 @@ import {
   KillToggledEvent,
   DayChangedEvent,
   NightToggledEvent,
+  TimerChangedEvent,
 } from "@botc/shared";
 import type { Server, Socket } from "socket.io";
 import { ScriptService } from "./ScriptService";
@@ -48,6 +49,44 @@ export class GameService {
     room.isNight = !room.isNight
     const nightToggledEvent: NightToggledEvent = { isNight: room.isNight }
     this.io.to(code).emit(EventEnum.NightToggled, nightToggledEvent)
+  }
+
+  startTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to start`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerStarted)
+  }
+
+  pauseTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to pause`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerPaused)
+  }
+
+  resetTimer(code: string) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer failed to reset`)
+      return
+    }
+    this.io.to(code).emit(EventEnum.TimerReset)
+  }
+
+  changeTimer(code: string, time: number) {
+    const room = this.gameRooms.get(code)
+    if (!room) {
+      console.log(`Room with code ${code} not found. The timer was not changed`)
+      return
+    }
+    room.timer = time
+    const timerChangedEvent: TimerChangedEvent = { time: time }
+    this.io.to(code).emit(EventEnum.TimerChanged, timerChangedEvent)
   }
 
   changeDay(code: string, day: number) {
@@ -117,7 +156,8 @@ export class GameService {
         meta: script[0],
         roles: roles,
       },
-      day: 1
+      day: 1,
+      timer: 600
     };
     this.gameRooms.set(gameCode, newRoom);
 

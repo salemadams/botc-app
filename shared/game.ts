@@ -104,6 +104,7 @@ export interface GameRoom {
   isNight: boolean;
   scriptDetail: ScriptDetail;
   day: number
+  timer: number
 }
 
 export interface HostReminderInfo {

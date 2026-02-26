@@ -1,3 +1,4 @@
+import { useTimer } from "@/hooks/useTimer";
 import {
   createContext,
   ReactNode,
@@ -21,6 +22,7 @@ import {
   Message,
   DayChangedEvent,
   NightToggledEvent,
+  TimerChangedEvent,
 } from "@botc/shared";
 import { useSocketContext } from "./useSocketContext";
 
@@ -32,7 +34,10 @@ interface GameContextType {
   messages: Record<string, Message[]>
   addMessage: (socketId: string, message: Message) => void
   day: number,
-  setDay: (day: number) => void
+  setDay: (day: number) => void,
+  timeRemaining: number,
+  setTimeRemaining: (time: number) => void
+  running: boolean,
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -45,6 +50,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   );
   const [day, setDay] = useState(1)
   const { client } = useSocketContext();
+  const { timeRemaining, setTimeRemaining, startTimer, resetTimer, pauseTimer, running, prevTimeRemainingRef } = useTimer()
 
   const addMessage = (socketId: string, message: Message) => {
     setMessages((prev) => ({
@@ -123,6 +129,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
             isNight: event.isNight
           }
         })
+      }),
+      client.subscribe(EventEnum.TimerStarted, startTimer),
+      client.subscribe(EventEnum.TimerPaused, pauseTimer),
+      client.subscribe(EventEnum.TimerReset, resetTimer),
+      client.subscribe(EventEnum.TimerChanged, (event: TimerChangedEvent) => {
+        prevTimeRemainingRef.current = event.time
+        setTimeRemaining(event.time)
       })
     ];
 
@@ -130,7 +143,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   }, []);
   return (
     <GameContext.Provider
-      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage }}
+      value={{ day, setDay, gameRoom, setGameRoom, currentPlayer, setCurrentPlayer, messages, addMessage, timeRemaining, setTimeRemaining, running }}
     >
       {children}
     </GameContext.Provider>

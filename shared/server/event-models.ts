@@ -45,3 +45,7 @@ export interface DayChangedEvent {
 export interface NightToggledEvent {
   isNight: boolean
 }
+
+export interface TimerChangedEvent {
+  time: number
+}

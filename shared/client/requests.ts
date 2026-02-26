@@ -7,6 +7,10 @@ export enum RequestEnum {
   ToggleAlive = "toggleAlive",
   SendMessage = "sendMessage",
   ChangeDay = "changeDay",
-  ToggleNight = "toggleNight"
+  ToggleNight = "toggleNight",
+  StartTimer = "startTimer",
+  ResetTimer = "resetTimer",
+  PauseTimer = "pauseTimer",
+  ChangeTimer = "changeTimer",
 }
 
