@@ -25,7 +25,8 @@ EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:4000
 ```
 
 Replace `YOUR_LOCAL_IP` with your computer's local IP address. To find it:
-- Open **Terminal** and run: `ipconfig getifaddr en0`
+- **Mac:** Open **Terminal** and run: `ipconfig getifaddr en0`
+- **Windows:** Open **Command Prompt** and run: `ipconfig` — look for the **IPv4 Address** under your Wi-Fi adapter (e.g. `192.168.1.50`)
 - It will print something like `192.168.1.50` — use that number
 
 Your finished `.env` file should look like:
@@ -84,7 +85,7 @@ docker compose logs -f client
 This will show the QR code in a format your camera can read.
 
 **"connect_error due to timeout" appears on the phone**
-Your IP address may have changed (this happens when you switch Wi-Fi networks). Find your new IP with `ipconfig getifaddr en0`, update the `.env` file, then stop and restart the app.
+Your IP address may have changed (this happens when you switch Wi-Fi networks). Find your new IP (Mac: `ipconfig getifaddr en0`, Windows: `ipconfig` and look for IPv4 Address), update the `.env` file, then stop and restart the app.
 
 **The app won't load at all**
 Make sure Docker Desktop is fully running before you run `docker compose up`.
