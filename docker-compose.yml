@@ -1,0 +1,41 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "4000:4000"
+    volumes:
+      # Mount source directories so edits on the host trigger hot reload
+      # inside the container without a full rebuild
+      - ./server/src:/app/server/src
+      - ./shared:/app/shared
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+    restart: unless-stopped
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+    volumes:
+      - ./client:/app/client
+      - ./shared:/app/shared
+      # Preserve the container's node_modules — without this, mounting
+      # ./client would overwrite the node_modules installed during the build
+      - /app/node_modules
+    environment:
+      # Set this to your machine's local IP so the phone can reach the server.
+      # Run `ipconfig getifaddr en0` (Mac) or `hostname -I` (Linux) to find it.
+      # Example: http://192.168.1.50:4000
+      EXPO_PUBLIC_API_URL: ${EXPO_PUBLIC_API_URL}
+    depends_on:
+      - server
+    # Required for Expo's QR code and interactive output to render in terminal
+    stdin_open: true
+    tty: true

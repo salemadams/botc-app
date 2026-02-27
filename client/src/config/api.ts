@@ -1,6 +1,9 @@
 import Constants from 'expo-constants';
 
 const getDevApiUrl = () => {
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
   const debuggerHost = Constants.expoConfig?.hostUri;
   if (debuggerHost) {
     const host = debuggerHost.split(':')[0];
